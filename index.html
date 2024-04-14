@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecciones FYC</title>
+    <style>
+        body {
+            background-color: lavenderblush;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: indigo;
+            text-align: center;
+        }
+
+        .formulario {
+            width: 80%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .grupo {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .grupo label {
+            width: 40%;
+            font-weight: bold;
+            color: indigo;
+        }
+
+        .grupo input,
+        .grupo select {
+            width: 55%;
+            padding: 8px;
+            border: 1px solid indigo;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: indigo;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: darkslateblue;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid indigo;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: indigo;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>FloryCampo</h1>
+    <h2 style="text-align: center; color: indigo;">Proyecciones FYC</h2>
+
+    <div class="formulario">
+        <form id="formulario">
+            <div class="grupo">
+                <label for="supervisor">Supervisor:</label>
+                <select id="supervisor" name="supervisor" onchange="filtrarVariedades()" required>
+                    <option value="">Selecciona un supervisor</option>
+                    <option value="ANGEL CAIZA">ANGEL CAIZA</option>
+                    <option value="PATRICIO PUMA">PATRICIO PUMA</option>
+                    <option value="JONNY PEÑAFIEL">JONNY PEÑAFIEL</option>
+                    <option value="SEGUNDO BASSANTES">SEGUNDO BASSANTES</option>
+                    <option value="DIEGO ANRANGO">DIEGO ANRANGO</option>
+                    <option value="PEDRO PINZA">PEDRO PINZA</option>
+                    <option value="SEGUNDO AGUILAR">SEGUNDO AGUILAR</option>
+                    <option value="EDGAR GUZMAN">EDGAR GUZMAN</option>
+                    <option value="MARIO PILLAJO">MARIO PILLAJO</option>
+                </select>
+            </div>
+
+            <div class="grupo">
+                <label for="variedad">Variedad de Rosas:</label>
+                <select id="variedad" name="variedad" required>
+                    <option value="">Selecciona una variedad</option>
+                    <!-- Las opciones de las variedades serán agregadas dinámicamente mediante JavaScript -->
+                </select>
+            </div>
+
+            <div class="grupo">
+                <label for="bloque">Bloque:</label>
+                <input type="text" id="bloque" name="bloque" required>
+            </div>
+
+            <div class="grupo">
+                <label for="cama">Número de Cama:</label>
+                <input type="number" id="cama" name="cama" required>
+            </div>
+
+            <div class="grupo">
+                <label for="muestra">Número de Muestra:</label>
+                <input type="number" id="muestra" name="muestra" required>
+            </div>
+
+            <div class="grupo">
+                <label for="cuadro">Número de Cuadro:</label>
+                <input type="number" id="cuadro" name="cuadro" required>
+            </div>
+
+            <div class="grupo">
+                <label for="r3">R3:</label>
+                <input type="text" id="r3" name="r3" required>
+            </div>
+
+            <div class="grupo">
+                <label for="r2a">R2a:</label>
+                <input type="text" id="r2a" name="r2a" required>
+            </div>
+
+            <div class="grupo">
+                <label for="r2b">R2b:</label>
+                <input type="text" id="r2b" name="r2b" required>
+            </div>
+
+            <div class="grupo">
+                <label for="r1">R1:</label>
+                <input type="text" id="r1" name="r1" required>
+            </div>
+
+            <button type="button" onclick="agregarTrabajador()">Registrar</button>
+        </form>
+    </div>
+
+    <h2 style="text-align: center; color: indigo;">Trabajadores Registrados</h2>
+    <table id="tabla">
+        <thead>
+            <tr>
+                <th>Supervisor</th>
+                <th>Variedad de Rosas</th>
+                <th>Bloque</th>
+                <th>Número de Cama</th>
+                <th>Número de Muestra</th>
+                <th>Número de Cuadro</th>
+                <th>R3</th>
+                <th>R2a</th>
+                <th>R2b</th>
+                <th>R1</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+    <button type="button" onclick="exportarExcel()">Exportar a Excel</button>
+    <button type="button" onclick="limpiarTabla()">Limpiar Tabla</button>
+
+    <script>
+        var variedadesPorSupervisor = {
+            "ANGEL CAIZA": ["COUNTRY CANDY", "FREE SPIRIT", "PINK X-PRESSION", "MANDARIN EXPRESSION", "PINK X-PRESSION", "SWEET MEMORY", "V.I.PINK", "PLAYA BLANCA", "FELICITY", "MONDIAL", "EXPLORER", "REDIANT", "SWEET MEMORY", "EXPLORER", "FELICITY", "REDVOLUTION", "FREEDOM", "PLAYA BLANCA"],
+            "PATRICIO PUMA": ["FELICITY", "PLAYA BLANCA", "BE SWEET", "COOL DOWN", "MANDALA", "MOMENTUM", "VEGGIE", "ORANGE CRUSH", "HIGH & YELLOW MAGIC", "KAHALA", "SILANTOI", "FULL MONTY", "V.I.PINK", "FREEDOM", "TABATHA", "ABSOLUT IN PINK", "HILUX", "RAGAZZA"],
+            "JONNY PEÑAFIEL": ["V.I.PINK", "MOMENTUM", "FULL MONTY"],
+            "SEGUNDO BASSANTES": ["FREEDOM", "PLAYA BLANCA", "SWEET MEMORY", "MONDIAL", "FORTUNE", "FREEDOM", "Hearts", "LADY IN RED", "FREEDOM", "MOMENTUM", "FREEDOM", "REDIANT", "SWEET UNIQUE"],
+            "DIEGO ANRANGO": ["MOODY BLUES", "DEEP PURPLE", "PINK MONDIAL", "MOMENTUM", "V.I.PINK", "RAGAZZA", "SWEET MEMORY", "V.I.PINK", "MONDIAL", "PINK MONDIAL", "REDIANT", "SHIMMER", "TIFFANY", "V.I.PINK", "FREEDOM"],
+            "PEDRO PINZA": ["FULL MONTY", "JESSIKA", "OPALA", "PINK FLOYD", "V.I.PINK", "HILUX", "REDVOLUTION", "EXPLORER", "STILETTO", "OPALA", "MOMENTUM", "SWEET MEMORY", "FREEDOM", "PLAYA BLANCA", "PLAYA BLANCA", "EXPLORER", "FREEDOM"],
+            "SEGUNDO AGUILAR": ["FREE SPIRIT", "MOMENTUM", "PINK MONDIAL", "TROPIC VERSILIA", "COUNTRY BLUES", "COUNTRY SECRET", "SWEET MEMORY", "FREEDOM", "FRUTETTO", "LOLA", "SWEET MEMORY", "FREEDOM", "KAHALA", "MAGIC TIME", "NOVIA", "V.I.PINK", "HILUX", "SUNSET GLORY", "PLAYA BLANCA", "FREEDOM"],
+            "EDGAR GUZMAN": ["FREEDOM", "EXPLORER", "COOL WATER", "PLAYA BLANCA", "REDIANT", "FREEDOM"],
+            "MARIO PILLAJO": ["COUNTRY CANDY", "FREE SPIRIT", "PINK X-PRESSION", "MANDARIN EXPRESSION", "PINK X-PRESSION", "SWEET MEMORY", "V.I.PINK", "PLAYA BLANCA", "FELICITY", "MONDIAL", "EXPLORER", "REDIANT", "SWEET MEMORY", "EXPLORER", "FELICITY", "REDVOLUTION", "FREEDOM", "PLAYA BLANCA"]
+        };
+
+        // Función para filtrar las variedades según el supervisor seleccionado
+        function filtrarVariedades() {
+            var supervisorSeleccionado = document.getElementById('supervisor').value;
+            var opcionesVariedad = document.getElementById('variedad');
+
+            // Limpiar las opciones anteriores
+            opcionesVariedad.innerHTML = '<option value="">Selecciona una variedad</option>';
+
+            // Obtener las variedades asociadas al supervisor seleccionado
+            var variedades = variedadesPorSupervisor[supervisorSeleccionado];
+
+            // Eliminar duplicados y agregar las opciones de variedades al menú desplegable
+            var variedadesUnicas = [...new Set(variedades)];
+            variedadesUnicas.forEach(function(variedad) {
+                var opcion = document.createElement('option');
+                opcion.value = variedad;
+                opcion.textContent = variedad;
+                opcionesVariedad.appendChild(opcion);
+            });
+        }
+
+        // Función para agregar un trabajador a la tabla
+        function agregarTrabajador() {
+            // Obtener los valores de los campos del formulario
+            var supervisor = document.getElementById('supervisor').value;
+            var variedad = document.getElementById('variedad').value;
+            var bloque = document.getElementById('bloque').value;
+            var cama = document.getElementById('cama').value;
+            var muestra = document.getElementById('muestra').value;
+            var cuadro = document.getElementById('cuadro').value;
+            var r3 = document.getElementById('r3').value;
+            var r2a = document.getElementById('r2a').value;
+            var r2b = document.getElementById('r2b').value;
+            var r1 = document.getElementById('r1').value;
+
+            // Crear una fila para la tabla
+            var fila = document.createElement('tr');
+
+            // Insertar las celdas en la fila
+            fila.innerHTML = `
+                <td>${supervisor}</td>
+                <td>${variedad}</td>
+                <td>${bloque}</td>
+                <td>${cama}</td>
+                <td>${muestra}</td>
+                <td>${cuadro}</td>
+                <td>${r3}</td>
+                <td>${r2a}</td>
+                <td>${r2b}</td>
+                <td>${r1}</td>
+            `;
+
+            // Agregar la fila a la tabla
+            document.getElementById('tbody').appendChild(fila);
+
+            // Guardar los datos en el almacenamiento local
+            guardarEnAlmacenamientoLocal();
+        }
+
+        // Función para reiniciar la tabla
+        function limpiarTabla() {
+            // Limpiar el cuerpo de la tabla
+            document.getElementById('tbody').innerHTML = '';
+
+            // Limpiar el almacenamiento local
+            localStorage.removeItem('datosTrabajadores');
+        }
+
+        // Función para exportar la tabla a Excel
+        function exportarExcel() {
+            // Lógica para exportar a Excel...
+            alert('Exportando a Excel...');
+        }
+
+        // Función para guardar los datos en el almacenamiento local
+        function guardarEnAlmacenamientoLocal() {
+            // Obtener los datos de la tabla
+            var datos = document.getElementById('tbody').innerHTML;
+
+            // Guardar los datos en el almacenamiento local
+            localStorage.setItem('datosTrabajadores', datos);
+        }
+
+        // Función para cargar los datos desde el almacenamiento local al cargar la página
+        window.onload = function() {
+            var datosGuardados = localStorage.getItem('datosTrabajadores');
+            if (datosGuardados) {
+                document.getElementById('tbody').innerHTML = datosGuardados;
+            }
+        };
+    </script>
+</body>
+</html>
